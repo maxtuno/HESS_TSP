@@ -39,7 +39,7 @@ double oracle (struct data *data)
   int i = 0;
   double local = 0.0;
   for (i = 0; i < data->size; i++) {
-    local += round(cabs (data->xy[data->seq[(i + 1) % data->size]] - data->xy[data->seq[i]]));
+    local += round(cabs (data->xy[data->seq[(i + 1) % data->size]] - data->xy[data->seq[i]])); // remove round for continuous metric.
     if (local > data->master) {
       return local;
     }
