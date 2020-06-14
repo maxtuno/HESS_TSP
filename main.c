@@ -1,3 +1,24 @@
+/*
+///////////////////////////////////////////////////////////////////////////////
+//        Copyright (c) 2012-2020 Oscar Riveros. all rights reserved.        //
+//                        oscar.riveros@peqnp.science                        //
+//                                                                           //
+//   without any restriction, Oscar Riveros reserved rights, patents and     //
+//  commercialization of this knowledge or derived directly from this work.  //
+///////////////////////////////////////////////////////////////////////////////
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -18,7 +39,7 @@ double oracle (struct data *data)
   int i = 0;
   double local = 0.0;
   for (i = 0; i < data->size; i++) {
-    local += cabs (data->xy[data->seq[(i + 1) % data->size]] - data->xy[data->seq[i]]); // remove "round" is only for comparing with integer based solvers.
+    local += round(cabs (data->xy[data->seq[(i + 1) % data->size]] - data->xy[data->seq[i]]));
     if (local > data->master) {
       return local;
     }
@@ -40,7 +61,7 @@ void invert (int i, int j, struct data *data)
 
 void hess (struct data *data)
 {
-  int i = 0, j = 0, count = 0, anchor = 0;
+  int i = 0, j = 0, anchor = 0;
   double local = 0, global = 0;
   data->master = DBL_MAX;
   for (;;) {
@@ -58,7 +79,6 @@ void hess (struct data *data)
             printf ("c %lf\n", data->master);
             memcpy(data->opt, data->seq, data->size * sizeof (int));
             anchor = 0;
-            count = 0;
           }
           goto oo;
         } else if (local > data->master) {
@@ -66,7 +86,7 @@ void hess (struct data *data)
         }
       }
     }
-    if (anchor && count++ > log2 (data->size + 1)) {
+    if (anchor) {
       break;
     }
   }
